@@ -6,11 +6,11 @@ namespace AsmdefHelper.DependencyGraph.Editor
     [Serializable, NodeMenuItem("Assembly Node")]
     public class AssemblyReferenceNode : BaseNode
     {
-        [Input(name = "Ref By", allowMultiple = true)]
-        public AssemblyReferenceNode input;
+        [Input(name = "Untitled Input", allowMultiple = true)]
+        public string input;
 
-        [Output(name = "Ref To", allowMultiple = true)]
-        public AssemblyReferenceNode output;
+        [Output(name = "Untitled Output", allowMultiple = true)]
+        public string output;
 
         public override string name => "Untitled Assembly Node";
     }

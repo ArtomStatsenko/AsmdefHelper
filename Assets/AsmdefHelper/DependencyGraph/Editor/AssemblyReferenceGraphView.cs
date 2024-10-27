@@ -1,143 +1,90 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using GraphProcessor;
 using UnityEditor;
+using UnityEditor.Compilation;
 using UnityEngine;
 
 namespace AsmdefHelper.DependencyGraph.Editor
 {
     public class AssemblyReferenceGraphView : BaseGraphView
     {
-        private const float RepulsionStrength = 500f;
-        private const float AttractionStrength = 0.1f;
-        private const float DesiredDistance = 200f;
-        private const int Iterations = 100;
+        private const string InputSocketId = "input";
+        private const string OutputSocketId = "output";
 
         public AssemblyReferenceGraphView(EditorWindow window, BaseGraph graph)
             : base(window) => InitializeGraph(graph);
 
         private void InitializeGraph(BaseGraph graph)
         {
-            var nodes = CreateNodes(graph);
-            CreateEdges(graph, nodes);
-            ApplyForceDirectedLayout(nodes, graph);
+            var assemblies = CompilationPipeline.GetAssemblies();
+            var asmdefNodeDict = CreateNodes(graph, assemblies);
+            CreateDependencies(graph, assemblies, asmdefNodeDict);
+            LayoutNodes(asmdefNodeDict.Values.ToArray());
         }
 
-        private List<BaseNode> CreateNodes(BaseGraph graph)
-        {
-            var nodes = Enumerable
-                .Range(0, 10)
-                .Select(_ => BaseNode.CreateFromType<AssemblyReferenceNode>(Vector2.zero))
-                .ToList();
-
-            foreach (var node in nodes)
-                graph.AddNode(node);
-
-            return nodes.Cast<BaseNode>().ToList();
-        }
-
-        private void CreateEdges(BaseGraph graph, List<BaseNode> nodes)
-        {
-            var edges = new List<(int from, int to)> { (0, 1), (0, 2), (1, 3), (0, 4), (4, 5) };
-            foreach (var (from, to) in edges)
-            {
-                var outputPort = nodes[from].GetPort("output", null);
-                var inputPort = nodes[to].GetPort("input", null);
-                if (outputPort != null && inputPort != null)
-                    graph.Connect(inputPort, outputPort);
-            }
-        }
-
-        private void ApplyForceDirectedLayout(List<BaseNode> nodes, BaseGraph graph)
-        {
-            var positions = CalculateForceDirectedPositions(nodes, graph);
-            for (var i = 0; i < nodes.Count; i++)
-                nodes[i].position = new Rect(positions[i], new Vector2(100, 100));
-        }
-
-        private List<Vector2> CalculateForceDirectedPositions(List<BaseNode> nodes, BaseGraph graph)
-        {
-            var nodePositions = InitializeNodePositions(nodes);
-            var forces = new Vector2[nodes.Count];
-
-            for (var i = 0; i < Iterations; i++)
-            {
-                Array.Clear(forces, 0, nodes.Count);
-
-                CalculateRepulsiveForces(nodes, nodePositions, forces);
-                CalculateAttractiveForces(graph, nodes, nodePositions, forces);
-
-                UpdateNodePositions(nodePositions, forces);
-            }
-
-            return nodePositions;
-        }
-
-        private List<Vector2> InitializeNodePositions(List<BaseNode> nodes)
-        {
-            return nodes
-                .Select(
-                    _ =>
-                        new Vector2(
-                            UnityEngine.Random.Range(0, 500),
-                            UnityEngine.Random.Range(0, 500)
-                        )
-                )
-                .ToList();
-        }
-
-        private void CalculateRepulsiveForces(
-            List<BaseNode> nodes,
-            List<Vector2> nodePositions,
-            Vector2[] forces
+        private Dictionary<string, AssemblyReferenceNode> CreateNodes(
+            BaseGraph graph,
+            Assembly[] assemblies
         )
         {
-            for (var i = 0; i < nodes.Count; i++)
+            var asmdefNodeDict = new Dictionary<string, AssemblyReferenceNode>();
+            foreach (var asm in assemblies)
             {
-                for (var j = i + 1; j < nodes.Count; j++)
-                {
-                    var direction = nodePositions[i] - nodePositions[j];
-                    var distance = direction.magnitude;
-                    if (distance == 0)
-                        distance = 0.1f;
+                var node = BaseNode.CreateFromType<AssemblyReferenceNode>(Vector2.zero);
+                graph.AddNode(node);
 
-                    var repulsion =
-                        RepulsionStrength * direction.normalized / (distance * distance);
-                    forces[i] += repulsion;
-                    forces[j] -= repulsion;
+                node.SetCustomName(asm.name);
+
+                var sourcesCount = assemblies.Count(a => a.assemblyReferences.Contains(asm));
+                var destinationsCount = asm.assemblyReferences.Length;
+
+                node.SetPortLabel(InputSocketId, $"RefBy({sourcesCount})");
+                node.SetPortLabel(OutputSocketId, $"RefTo({destinationsCount})");
+
+                asmdefNodeDict[asm.name] = node;
+            }
+            return asmdefNodeDict;
+        }
+
+        private void CreateDependencies(
+            BaseGraph graph,
+            Assembly[] assemblies,
+            Dictionary<string, AssemblyReferenceNode> asmdefNodeDict
+        )
+        {
+            foreach (var asm in assemblies)
+            {
+                if (!asmdefNodeDict.TryGetValue(asm.name, out var fromNode))
+                    continue;
+
+                foreach (var reference in asm.assemblyReferences)
+                {
+                    if (!asmdefNodeDict.TryGetValue(reference.name, out var toNode))
+                        continue;
+
+                    var inputPort = toNode.GetPort(InputSocketId, null);
+                    var outputPort = fromNode.GetPort(OutputSocketId, null);
+                    if (inputPort != null && outputPort != null)
+                        graph.Connect(inputPort, outputPort);
                 }
             }
         }
 
-        private void CalculateAttractiveForces(
-            BaseGraph graph,
-            List<BaseNode> nodes,
-            List<Vector2> nodePositions,
-            Vector2[] forces
-        )
+        private void LayoutNodes(AssemblyReferenceNode[] nodes)
         {
-            foreach (var edge in graph.edges)
-            {
-                var i = nodes.IndexOf(edge.outputNode);
-                var j = nodes.IndexOf(edge.inputNode);
-                if (i == -1 || j == -1)
-                    continue;
-
-                var direction = nodePositions[j] - nodePositions[i];
-                var distance = direction.magnitude;
-                var attraction =
-                    AttractionStrength * (distance - DesiredDistance) * direction.normalized;
-
-                forces[i] += attraction;
-                forces[j] -= attraction;
-            }
+            var positions = CalculateHierarchicalPositions(nodes);
+            for (var i = 0; i < nodes.Length; i++)
+                nodes[i].position = new Rect(positions[i], new Vector2(100, 100));
         }
 
-        private void UpdateNodePositions(List<Vector2> nodePositions, Vector2[] forces)
+        private List<Vector2> CalculateHierarchicalPositions(AssemblyReferenceNode[] nodes)
         {
-            for (var i = 0; i < nodePositions.Count; i++)
-                nodePositions[i] += forces[i] * Time.deltaTime;
+            var positions = new List<Vector2>();
+            var offset = new Vector2(200, 200);
+            for (var i = 0; i < nodes.Length; i++)
+                positions.Add(offset * i);
+            return positions;
         }
     }
 }
