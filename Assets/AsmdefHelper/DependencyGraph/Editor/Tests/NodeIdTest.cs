@@ -5,16 +5,20 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace AsmdefHelper.DependencyGraph.Editor.Tests {
-    public class NodeIdTest {
+namespace AsmdefHelper.DependencyGraph.Editor.Tests
+{
+    public class NodeIdTest
+    {
         [Test]
-        public void TestNodeIdValue() {
+        public void TestNodeIdValue()
+        {
             var nodeId = new NodeId(123);
             Assert.That(nodeId.value, Is.EqualTo(123));
         }
 
         [Test]
-        public void TestNodeIdEquals() {
+        public void TestNodeIdEquals()
+        {
             var id1 = new NodeId(111);
             var id2 = new NodeId(222);
             var id3 = new NodeId(111);
@@ -24,7 +28,8 @@ namespace AsmdefHelper.DependencyGraph.Editor.Tests {
         }
 
         [Test]
-        public void TestNodeIdToString() {
+        public void TestNodeIdToString()
+        {
             var nodeId = new NodeId(999);
             Assert.That(nodeId.ToString(), Is.EqualTo("999"));
         }

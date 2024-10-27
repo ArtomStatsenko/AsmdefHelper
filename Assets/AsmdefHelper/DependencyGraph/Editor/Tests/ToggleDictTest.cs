@@ -4,11 +4,13 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace AsmdefHelper.DependencyGraph.Editor.Tests {
-    public class ToggleDictTest {
-
+namespace AsmdefHelper.DependencyGraph.Editor.Tests
+{
+    public class ToggleDictTest
+    {
         [Test]
-        public void TestScanUpdate() {
+        public void TestScanUpdate()
+        {
             var dict = new ToggleDict();
             var toggle0 = new ToggleMock { IsOn = false };
             var toggle1 = new ToggleMock { IsOn = false };
@@ -25,7 +27,8 @@ namespace AsmdefHelper.DependencyGraph.Editor.Tests {
         }
 
         [Test]
-        public void TestTryGetToggle() {
+        public void TestTryGetToggle()
+        {
             var dict = new ToggleDict();
             var toggle0 = new ToggleMock { IsOn = false };
             var toggle1 = new ToggleMock { IsOn = false };

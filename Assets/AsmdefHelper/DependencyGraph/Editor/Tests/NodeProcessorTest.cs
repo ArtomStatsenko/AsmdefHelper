@@ -5,16 +5,19 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace AsmdefHelper.DependencyGraph.Editor.Tests {
-    public class NodeProcessorTest {
-
+namespace AsmdefHelper.DependencyGraph.Editor.Tests
+{
+    public class NodeProcessorTest
+    {
         [SetUp]
-        public void SetUpBeforeEveryTest() {
+        public void SetUpBeforeEveryTest()
+        {
             Nodes.Init();
         }
 
         [Test]
-        public void TestSetRequireNodes() {
+        public void TestSetRequireNodes()
+        {
             var node = new HashSetDependencyNode(new NodeProfile(new NodeId(0), "node0"));
             var p1 = new NodeProfile(new NodeId(1), "node1");
             var p2 = new NodeProfile(new NodeId(2), "node2");
@@ -28,15 +31,17 @@ namespace AsmdefHelper.DependencyGraph.Editor.Tests {
         }
 
         [Test]
-        public void TestLinerNodeDependency() {
+        public void TestLinerNodeDependency()
+        {
             // [0]--->[1]
-            Nodes._0.SetRequireNodes(new[] { Profiles._1});
+            Nodes._0.SetRequireNodes(new[] { Profiles._1 });
             NodeProcessor.SetBeRequiredNodes(new[] { Nodes._0, Nodes._1 });
             Assert.That(Nodes._1.Sources.Any(x => x.Equals(Profiles._0)));
         }
 
         [Test]
-        public void TestSomeNodeDependency() {
+        public void TestSomeNodeDependency()
+        {
             Nodes.SetSomeNodeDependency();
             NodeProcessor.SetBeRequiredNodes(Nodes.All);
             // 0

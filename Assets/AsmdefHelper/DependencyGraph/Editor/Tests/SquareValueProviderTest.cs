@@ -5,11 +5,13 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace AsmdefHelper.DependencyGraph.Editor.Tests {
-    public class SquareValueProviderTest {
-
+namespace AsmdefHelper.DependencyGraph.Editor.Tests
+{
+    public class SquareValueProviderTest
+    {
         [Test]
-        public void TestProvideNearestSquareValue() {
+        public void TestProvideNearestSquareValue()
+        {
             var ans = SquareValueProvider.ProvideNearestSquareValue(0);
             Assert.That(ans, Is.EqualTo(0));
             ans = SquareValueProvider.ProvideNearestSquareValue(1);

@@ -4,11 +4,13 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace AsmdefHelper.DependencyGraph.Editor.Tests {
-    public class NodeGridTest {
-
+namespace AsmdefHelper.DependencyGraph.Editor.Tests
+{
+    public class NodeGridTest
+    {
         [Test]
-        public void TestNodeGrid() {
+        public void TestNodeGrid()
+        {
             const float e = 0.000001F;
             var nodeGrid = new NodeGrid(10.0F, 10.0F, 10.0F, 4);
             Assert.That(nodeGrid.GridCount, Is.EqualTo(4));

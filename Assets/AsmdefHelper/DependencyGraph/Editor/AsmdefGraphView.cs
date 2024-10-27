@@ -8,10 +8,14 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace AsmdefHelper.DependencyGraph.Editor {
-    public sealed class AsmdefGraphView : GraphView {
+namespace AsmdefHelper.DependencyGraph.Editor
+{
+    public sealed class AsmdefGraphView : GraphView
+    {
         readonly Dictionary<string, IAsmdefNodeView> asmdefNodeDict;
-        public AsmdefGraphView(IEnumerable<Assembly> assemblies) {
+
+        public AsmdefGraphView(IEnumerable<Assembly> assemblies)
+        {
             var assemblyArr = assemblies.ToArray();
             // zoom可能に
             SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
@@ -23,7 +27,8 @@ namespace AsmdefHelper.DependencyGraph.Editor {
             this.AddManipulator(new ContentDragger());
             // ノードの追加
             asmdefNodeDict = new Dictionary<string, IAsmdefNodeView>();
-            foreach (var asm in assemblyArr) {
+            foreach (var asm in assemblyArr)
+            {
                 var node = new AsmdefNode(asm.name, contentContainer);
                 AddElement(node);
                 asmdefNodeDict.Add(node.title, node);
@@ -34,10 +39,13 @@ namespace AsmdefHelper.DependencyGraph.Editor {
                 .ToDictionary(x => x.Name);
             var dependencies = new List<IDependencyNode>(nodeProfiles.Count);
             // 依存先の設定
-            foreach (var asm in assemblyArr) {
-                if (nodeProfiles.TryGetValue(asm.name, out var profile)) {
-                    var requireProfiles = asm.assemblyReferences
-                        .Where(x => nodeProfiles.ContainsKey(x.name))
+            foreach (var asm in assemblyArr)
+            {
+                if (nodeProfiles.TryGetValue(asm.name, out var profile))
+                {
+                    var requireProfiles = asm.assemblyReferences.Where(
+                        x => nodeProfiles.ContainsKey(x.name)
+                    )
                         .Select(x => nodeProfiles[x.name]);
                     var dep = new HashSetDependencyNode(profile);
                     dep.SetRequireNodes(requireProfiles);
@@ -48,12 +56,16 @@ namespace AsmdefHelper.DependencyGraph.Editor {
             NodeProcessor.SetBeRequiredNodes(dependencies);
 
             // 依存先にのみラインを追加
-            foreach (var dep in dependencies) {
-                if (!asmdefNodeDict.TryGetValue(dep.Profile.Name, out var fromNode)) {
+            foreach (var dep in dependencies)
+            {
+                if (!asmdefNodeDict.TryGetValue(dep.Profile.Name, out var fromNode))
+                {
                     continue;
                 }
-                foreach (var dest in dep.Destinations) {
-                    if (!asmdefNodeDict.TryGetValue(dest.Name, out var toNode)) {
+                foreach (var dest in dep.Destinations)
+                {
+                    if (!asmdefNodeDict.TryGetValue(dest.Name, out var toNode))
+                    {
                         continue;
                     }
                     fromNode.RightPort.Connect(toNode.LeftPort);
@@ -61,30 +73,37 @@ namespace AsmdefHelper.DependencyGraph.Editor {
             }
 
             // Portに接続数を追記
-            foreach (var dep in dependencies) {
-                if (asmdefNodeDict.TryGetValue(dep.Profile.Name, out var node)) {
+            foreach (var dep in dependencies)
+            {
+                if (asmdefNodeDict.TryGetValue(dep.Profile.Name, out var node))
+                {
                     node.LeftPort.Label = $"RefBy({dep.Sources.Count})";
                     node.RightPort.Label = $"RefTo({dep.Destinations.Count})";
                 }
             }
 
             // ノードの場所を整列
-            var sortStrategy = new AlignSortStrategy(AlignParam.Default(),  Vector2.zero);
+            var sortStrategy = new AlignSortStrategy(AlignParam.Default(), Vector2.zero);
             var sortedNode = sortStrategy.Sort(dependencies);
-            foreach (var node in sortedNode) {
-                if (asmdefNodeDict.TryGetValue(node.Profile.Name, out var nodeView)) {
+            foreach (var node in sortedNode)
+            {
+                if (asmdefNodeDict.TryGetValue(node.Profile.Name, out var nodeView))
+                {
                     nodeView.SetPositionXY(node.Position);
                 }
             }
         }
 
-        public void SetNodeVisibility(string nodeName, bool visible_) {
-            if (asmdefNodeDict.TryGetValue(nodeName, out var node)) {
+        public void SetNodeVisibility(string nodeName, bool visible_)
+        {
+            if (asmdefNodeDict.TryGetValue(nodeName, out var node))
+            {
                 node.Visibility = visible_;
             }
         }
 
-        public override List<Port> GetCompatiblePorts(Port startAnchor, NodeAdapter nodeAdapter) {
+        public override List<Port> GetCompatiblePorts(Port startAnchor, NodeAdapter nodeAdapter)
+        {
             return ports.ToList();
         }
     }

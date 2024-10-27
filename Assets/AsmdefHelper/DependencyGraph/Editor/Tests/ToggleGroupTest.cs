@@ -3,10 +3,13 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace AsmdefHelper.DependencyGraph.Editor.Tests {
-    public class ToggleGroupTest {
+namespace AsmdefHelper.DependencyGraph.Editor.Tests
+{
+    public class ToggleGroupTest
+    {
         [Test]
-        public void TestToggleGroup() {
+        public void TestToggleGroup()
+        {
             var toggle0 = new ToggleMock();
             var toggle1 = new ToggleMock();
             var toggle2 = new ToggleMock();
@@ -18,7 +21,9 @@ namespace AsmdefHelper.DependencyGraph.Editor.Tests {
             Assert.That(toggle2.IsOn, Is.True);
         }
     }
-    public class ToggleMock : IToggle {
+
+    public class ToggleMock : IToggle
+    {
         public bool IsOn { set; get; }
         public string Name { get; set; }
     }

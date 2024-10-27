@@ -5,20 +5,24 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace AsmdefHelper.CustomCreate.Editor {
-    public class AsmdefRenameView : EditorWindow {
+namespace AsmdefHelper.CustomCreate.Editor
+{
+    public class AsmdefRenameView : EditorWindow
+    {
         static string renameAsmdefPath = "";
         static string asmdefDirectory = "";
 
         [MenuItem("Assets/AsmdefHelper/Rename asmdef")]
-        public static void ShowWindow() {
+        public static void ShowWindow()
+        {
             // PathとNameの初期値
             var asset = Selection.activeObject;
             renameAsmdefPath = AssetDatabase.GetAssetPath(asset);
             asmdefDirectory = Path.GetDirectoryName(renameAsmdefPath);
             // asmdefが選択されている時のみ開く
             var extension = renameAsmdefPath.Split('.').LastOrDefault();
-            if (extension == "asmdef") {
+            if (extension == "asmdef")
+            {
                 var window = GetWindow<AsmdefRenameView>();
                 window.titleContent = new GUIContent("AsmdefRenameView");
                 window.minSize = new Vector2(200, 100);
@@ -26,18 +30,20 @@ namespace AsmdefHelper.CustomCreate.Editor {
             }
         }
 
-        public void OnEnable() {
+        public void OnEnable()
+        {
             // Each editor window contains a root VisualElement object
             VisualElement root = rootVisualElement;
 
             // Import UXML
-            var visualTree =
-                AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
-                    "Assets/AsmdefHelper/CustomCreate/Editor/AsmdefRenameView.uxml");
-            if (visualTree == null) {
-                visualTree =
-                    AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
-                        "Packages/dev.n5y.asmdefhelper/AsmdefHelper/CustomCreate/Editor/AsmdefRenameView.uxml");
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+                "Assets/AsmdefHelper/CustomCreate/Editor/AsmdefRenameView.uxml"
+            );
+            if (visualTree == null)
+            {
+                visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+                    "Packages/dev.n5y.asmdefhelper/AsmdefHelper/CustomCreate/Editor/AsmdefRenameView.uxml"
+                );
             }
 
 #if UNITY_2020_1_OR_NEWER
@@ -70,7 +76,8 @@ namespace AsmdefHelper.CustomCreate.Editor {
 #endif
 
             // .asmdefのnameとファイル名を更新して閉じる
-            createButton.clickable.clicked += () => {
+            createButton.clickable.clicked += () =>
+            {
                 var asmdefName = nameTextField.value;
                 asmdef.name = asmdefName;
 #if UNITY_2020_2_OR_NEWER
@@ -81,7 +88,8 @@ namespace AsmdefHelper.CustomCreate.Editor {
                 // 新asmdef作成
                 File.WriteAllText(newAsmdefPath, asmdefJson, Encoding.UTF8);
                 // ファイル名が変わった場合は旧asmdef削除
-                if (asmdefNameOrg != asmdefName) {
+                if (asmdefNameOrg != asmdefName)
+                {
                     FileUtil.DeleteFileOrDirectory(renameAsmdefPath);
                 }
                 AssetDatabase.Refresh();

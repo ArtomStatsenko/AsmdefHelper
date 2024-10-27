@@ -4,11 +4,13 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.TestTools;
 
-namespace AsmdefHelper.DependencyGraph.Editor.Tests {
-    public class HashSetDependencyNodeTest {
-
+namespace AsmdefHelper.DependencyGraph.Editor.Tests
+{
+    public class HashSetDependencyNodeTest
+    {
         [Test]
-        public void TestHashSetDependencyNode() {
+        public void TestHashSetDependencyNode()
+        {
             var node = new HashSetDependencyNode(new NodeProfile(new NodeId(1), "node"));
             Assert.That(node, Is.InstanceOf<IDependencyNode>());
             Assert.That(node.Profile.Id.value, Is.EqualTo(1));

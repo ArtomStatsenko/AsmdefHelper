@@ -4,29 +4,34 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace AsmdefHelper.CustomCreate.Editor {
+namespace AsmdefHelper.CustomCreate.Editor
+{
     // original: https://github.com/baba-s/UniAssemblyDefinitionCreator
-    public class AsmdefCustomCreateView : EditorWindow {
+    public class AsmdefCustomCreateView : EditorWindow
+    {
         [MenuItem("Assets/AsmdefHelper/Create custom asmdef")]
-        public static void ShowWindow() {
+        public static void ShowWindow()
+        {
             var window = GetWindow<AsmdefCustomCreateView>();
             window.titleContent = new GUIContent("AsmdefCustomCreateView");
             window.minSize = new Vector2(200, 200);
             window.maxSize = new Vector2(2000, 2000);
         }
 
-        public void OnEnable() {
+        public void OnEnable()
+        {
             // Each editor window contains a root VisualElement object
             VisualElement root = rootVisualElement;
 
             // Import UXML
-            var visualTree =
-                AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
-                    "Assets/AsmdefHelper/CustomCreate/Editor/AsmdefCustomCreateView.uxml");
-            if (visualTree == null) {
-                visualTree =
-                    AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
-                        "Packages/dev.n5y.asmdefhelper/AsmdefHelper/CustomCreate/Editor/AsmdefCustomCreateView.uxml");
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+                "Assets/AsmdefHelper/CustomCreate/Editor/AsmdefCustomCreateView.uxml"
+            );
+            if (visualTree == null)
+            {
+                visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+                    "Packages/dev.n5y.asmdefhelper/AsmdefHelper/CustomCreate/Editor/AsmdefCustomCreateView.uxml"
+                );
             }
 
 #if UNITY_2020_1_OR_NEWER
@@ -62,9 +67,11 @@ namespace AsmdefHelper.CustomCreate.Editor {
             root.Q<Box>(className: "Box").Remove(rootNamespaceTextField);
 #endif
             // .asmdefを作成して閉じる
-            createButton.clickable.clicked += () => {
+            createButton.clickable.clicked += () =>
+            {
                 var asmdefName = nameTextField.value;
-                var asmdef = new AssemblyDefinitionJson {
+                var asmdef = new AssemblyDefinitionJson
+                {
                     name = asmdefName,
 #if UNITY_2020_2_OR_NEWER
                     rootNamespace = rootNamespaceTextField.value,

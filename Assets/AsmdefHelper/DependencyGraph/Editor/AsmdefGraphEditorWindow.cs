@@ -1,23 +1,25 @@
 ﻿using UnityEditor;
 using UnityEditor.Compilation;
 
-namespace AsmdefHelper.DependencyGraph.Editor {
-    public class AsmdefGraphEditorWindow : EditorWindow, IToggleCheckDelegate {
+namespace AsmdefHelper.DependencyGraph.Editor
+{
+    public class AsmdefGraphEditorWindow : EditorWindow, IToggleCheckDelegate
+    {
         static AsmdefSelectionView selectionWindow;
         AsmdefGraphView graphView;
 
         [MenuItem("AsmdefHelper/Open DependencyGraph", priority = 2000)]
-        public static void Open() {
+        public static void Open()
+        {
             GetWindow<AsmdefGraphEditorWindow>("Asmdef Dependency");
         }
 
-        void OnEnable() {
+        void OnEnable()
+        {
             // .asmdefをすべて取得
             var asmdefs = CompilationPipeline.GetAssemblies();
             // viewの作成
-            graphView = new AsmdefGraphView(asmdefs) {
-                style = { flexGrow = 1 }
-            };
+            graphView = new AsmdefGraphView(asmdefs) { style = { flexGrow = 1 } };
             rootVisualElement.Add(graphView);
 
             // 選択ウィンドウも作成
@@ -26,14 +28,17 @@ namespace AsmdefHelper.DependencyGraph.Editor {
         }
 
         // 片方を閉じる
-        void OnDestroy() {
-            if (selectionWindow != null) {
+        void OnDestroy()
+        {
+            if (selectionWindow != null)
+            {
                 selectionWindow.Close();
             }
             selectionWindow = null;
         }
 
-        void IToggleCheckDelegate.OnSelectionChanged(string label, bool isChecked) {
+        void IToggleCheckDelegate.OnSelectionChanged(string label, bool isChecked)
+        {
             graphView.SetNodeVisibility(label, isChecked);
         }
     }

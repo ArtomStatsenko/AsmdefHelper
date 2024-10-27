@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using AsmdefHelper.DependencyGraph.Editor.DependencyNode;
 
-namespace AsmdefHelper.DependencyGraph.Editor.Tests {
-
-    public static class Ids {
+namespace AsmdefHelper.DependencyGraph.Editor.Tests
+{
+    public static class Ids
+    {
         public static readonly NodeId _0 = new NodeId(0);
         public static readonly NodeId _1 = new NodeId(1);
         public static readonly NodeId _2 = new NodeId(2);
@@ -15,7 +16,9 @@ namespace AsmdefHelper.DependencyGraph.Editor.Tests {
         public static readonly NodeId _8 = new NodeId(8);
         public static readonly NodeId _9 = new NodeId(9);
     }
-    public static class Profiles {
+
+    public static class Profiles
+    {
         public static readonly NodeProfile _0 = new NodeProfile(Ids._0, "node0");
         public static readonly NodeProfile _1 = new NodeProfile(Ids._1, "node1");
         public static readonly NodeProfile _2 = new NodeProfile(Ids._2, "node2");
@@ -27,7 +30,9 @@ namespace AsmdefHelper.DependencyGraph.Editor.Tests {
         public static readonly NodeProfile _8 = new NodeProfile(Ids._8, "node8");
         public static readonly NodeProfile _9 = new NodeProfile(Ids._9, "node9");
     }
-    public static class Nodes {
+
+    public static class Nodes
+    {
         public static readonly IDependencyNode _0 = new HashSetDependencyNode(Profiles._0);
         public static readonly IDependencyNode _1 = new HashSetDependencyNode(Profiles._1);
         public static readonly IDependencyNode _2 = new HashSetDependencyNode(Profiles._2);
@@ -39,18 +44,31 @@ namespace AsmdefHelper.DependencyGraph.Editor.Tests {
         public static readonly IDependencyNode _8 = new HashSetDependencyNode(Profiles._8);
         public static readonly IDependencyNode _9 = new HashSetDependencyNode(Profiles._9);
 
-        public static readonly IEnumerable<IDependencyNode> All = new[] {
-            _0, _1, _2, _3, _4, _5, _6, _7, _8, _9
+        public static readonly IEnumerable<IDependencyNode> All = new[]
+        {
+            _0,
+            _1,
+            _2,
+            _3,
+            _4,
+            _5,
+            _6,
+            _7,
+            _8,
+            _9
         };
 
-        public static void Init() {
-            foreach (var n in All) {
+        public static void Init()
+        {
+            foreach (var n in All)
+            {
                 n.Sources.Clear();
                 n.Destinations.Clear();
             }
         }
 
-        public static void SetSomeNodeDependency() {
+        public static void SetSomeNodeDependency()
+        {
             /*
              *     ┌->[1]-┐
              * [0]-┴->[2]-┴->[4]--->[5]--->[6]

@@ -1,21 +1,24 @@
 using System.Collections;
+using AsmdefHelper.DependencyGraph.Editor.DependencyNode;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.TestTools;
-using AsmdefHelper.DependencyGraph.Editor.DependencyNode;
 
-namespace AsmdefHelper.DependencyGraph.Editor.Tests {
-    public class NodeProfileTest {
-
+namespace AsmdefHelper.DependencyGraph.Editor.Tests
+{
+    public class NodeProfileTest
+    {
         [Test]
-        public void TestNodeProfile() {
+        public void TestNodeProfile()
+        {
             var nodeProfile = new NodeProfile(new NodeId(123), "testNode");
             Assert.That(nodeProfile.Id.value, Is.EqualTo(123));
             Assert.That(nodeProfile.Name, Is.EqualTo("testNode"));
         }
 
         [Test]
-        public void TestNodeProfileEquals() {
+        public void TestNodeProfileEquals()
+        {
             var profile1 = new NodeProfile(new NodeId(111), "testNode1");
             var profile2 = new NodeProfile(new NodeId(222), "testNode1");
             var profile3 = new NodeProfile(new NodeId(111), "testNode2");
@@ -26,9 +29,9 @@ namespace AsmdefHelper.DependencyGraph.Editor.Tests {
             Assert.That(profile1, Is.EqualTo(profile4));
         }
 
-
         [Test]
-        public void TestNodeProfileName() {
+        public void TestNodeProfileName()
+        {
             var nodeProfile = new NodeProfile(new NodeId(123), "hoge");
             nodeProfile.Name = "testNode";
             Assert.That(nodeProfile.Name, Is.EqualTo("testNode"));

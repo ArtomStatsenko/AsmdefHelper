@@ -7,8 +7,10 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace AsmdefHelper.DependencyGraph.Editor.Tests {
-    public class LinerSortStrategyTest {
+namespace AsmdefHelper.DependencyGraph.Editor.Tests
+{
+    public class LinerSortStrategyTest
+    {
         const float d = 10.0F;
         const float w = 10.0F;
         const float h = 10.0F;
@@ -16,16 +18,18 @@ namespace AsmdefHelper.DependencyGraph.Editor.Tests {
         ISortStrategy sortStrategy;
 
         [SetUp]
-        public void SetUpBeforeEveryTest() {
+        public void SetUpBeforeEveryTest()
+        {
             Nodes.Init();
             sortStrategy = new LinerSortStrategy(Vector2.zero, d, w, h);
         }
 
         [Test]
-        public void TestLinerNodeDependency() {
+        public void TestLinerNodeDependency()
+        {
             var nodes = new[] { Nodes._0, Nodes._1 };
             // [0]--->[1]
-            Nodes._0.SetRequireNodes(new[] { Profiles._1});
+            Nodes._0.SetRequireNodes(new[] { Profiles._1 });
             NodeProcessor.SetBeRequiredNodes(nodes);
 
             var result = sortStrategy.Sort(nodes).ToArray();
